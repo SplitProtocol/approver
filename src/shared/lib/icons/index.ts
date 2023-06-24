@@ -1,0 +1,1 @@
+export { SplitLogo } from "./SplitLogo";
