@@ -10,4 +10,20 @@ export const Button = styled("button", {
   color: "$textDark",
   fontSize: "$small",
   fontWeight: "$bold",
+
+  variants: {
+    stretch: {
+      true: {
+        width: "100%",
+      },
+    },
+    size: {
+      default: {},
+      large: {
+        padding: "12px 16px",
+
+        fontSize: "$large",
+      },
+    },
+  },
 });

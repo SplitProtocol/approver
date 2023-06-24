@@ -18,6 +18,7 @@ export const { styled, getCssText, keyframes, createTheme, css } = createStitche
       block: "#191919",
       blockSecondary: "#2E2D2C",
       border: "#615447",
+      borderSecondary: "rgba(97, 84, 71, 0.50)",
       text: "#E5E5E5",
       textGray: "rgba(229, 229, 229, 0.7)",
       textGrayDark: "rgba(229, 229, 229, 0.5)",
