@@ -2,9 +2,9 @@ import { FC } from "react";
 
 export const SplitLogo: FC = () => (
   <svg width="42" height="63" viewBox="0 0 42 63" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="42" height="63" fill="url(#pattern0)" fillOpacity="0.9" />
+    <rect width="42" height="63" fill="url(#pattern1)" fillOpacity="0.9" />
     <defs>
-      <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <pattern id="pattern1" patternContentUnits="objectBoundingBox" width="1" height="1">
         <use xlinkHref="#image0_2103_535" transform="matrix(0.00136116 0 0 0.000907441 -0.0798548 0)" />
       </pattern>
       <image
