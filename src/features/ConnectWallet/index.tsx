@@ -44,7 +44,12 @@ export const ConnectWallet: FC = () => {
     try {
       const chain = getChainDataById(+network.value);
       console.log(chain);
-      await switchNetwork(+chain?.chainId);
+      await window?.ethereum?.request({
+        jsonrpc: "2.0",
+        method: "wallet_addEthereumChain",
+        params: [chain],
+        id: 0,
+      });
 
       setSelectedChain(network);
     } catch (e) {

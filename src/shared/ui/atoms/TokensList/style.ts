@@ -1,14 +1,34 @@
 import { styled } from "@/shared/lib/styles";
 
-export const TokensList = styled("div", {
-  display: "grid",
-  gap: 12,
-});
+export const TokensList = styled("div", {});
 
-export const Token = styled("div", {
+export const Token = styled("button", {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+
+  minWidth: "360px",
+  margin: "0 -20px",
+  padding: "8px 20px",
+
+  backgroundColor: "transparent",
+  border: "1px solid transparent",
+
+  textAlign: "left",
+
+  transition: "$default",
+
+  "@toWideMobile": {
+    minWidth: 320,
+  },
+
+  variants: {
+    selected: {
+      true: {
+        borderColor: "$border",
+      },
+    },
+  },
 });
 
 export const TokenInfo = styled("div", {

@@ -25,8 +25,8 @@ export const Search = styled("div", {
 export const Tokens = styled("div", {
   position: "relative",
 
-  marginBottom: 16,
-  paddingBottom: 16,
+  marginBottom: 8,
+  paddingBottom: 8,
 
   "&::after": {
     content: "",
@@ -57,13 +57,32 @@ export const TokensList = styled("div", {
   gap: 12,
 });
 
-export const TokensItem = styled("div", {
+export const TokensItem = styled("button", {
   display: "flex",
   alignItems: "center",
   gap: 6,
 
-  fontSize: "$defaultSmall",
+  padding: 0,
+
+  backgroundColor: "transparent",
+  border: "1px solid transparent",
+
+  fontSize: "$default",
   fontWeight: "$black",
+
+  transition: "$default",
+
+  "& > svg": {
+    width: 25,
+  },
+
+  variants: {
+    selected: {
+      true: {
+        borderColor: "$border",
+      },
+    },
+  },
 });
 
 export const TokensImg = styled("img", {
