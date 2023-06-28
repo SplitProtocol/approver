@@ -1,8 +1,9 @@
 import { useEthers } from "@usedapp/core";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import { getTokensByChainId } from "@/shared/lib/api/1inch/tokens";
+import { Token } from "@/shared/lib/api/1inch/tokens/types";
 import { chainsData } from "@/shared/lib/constants";
 import {
   AvalancheLogo,
@@ -58,7 +59,7 @@ const ABI = [
 ];
 
 export const MainPage: FC = () => {
-  const [tokens, setTokens] = useState([]);
+  const [tokens, setTokens] = useState<Token[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selectedToken, setSelectedToken] = useState<string>("");
   const [tokenBalances, setTokenBalances] = useState<string[]>([]);
@@ -136,7 +137,7 @@ export const MainPage: FC = () => {
           account,
           tokens.filter((item) => item.address !== "0x").map((item) => item.address),
         );
-        setTokenBalances(balances.map((item) => item.toString()));
+        setTokenBalances(balances.map((item: BigNumber) => item.toString()));
       })();
     }
   }, [tokens, account, library]);
@@ -158,7 +159,11 @@ export const MainPage: FC = () => {
         <S.Block>
           <S.Title>Select a Token</S.Title>
           <S.Search>
-            <Input value={search} onChange={(value) => setSearch(value)} placeholder="Search name or paste address" />
+            <Input
+              value={search}
+              onChange={(value) => setSearch(value as string)}
+              placeholder="Search name or paste address"
+            />
           </S.Search>
 
           <S.Tokens>

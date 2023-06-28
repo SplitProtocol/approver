@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui";
 
 import * as S from "./style";
 
-const getChainDataById = (chainId) => {
+const getChainDataById = (chainId: number) => {
   switch (chainId) {
     case 56:
       return chainsData.bsc;
@@ -29,21 +29,22 @@ const getChainDataById = (chainId) => {
 };
 
 export const ConnectWallet: FC = () => {
-  const { account, activateBrowserWallet, chainId, switchNetwork } = useEthers();
+  const { account, activateBrowserWallet, chainId } = useEthers();
 
   const [isDropdownOpened, setIsDropdownOpened] = useState<boolean>(false);
   const [selectedChain, setSelectedChain] = useState<null | { icon: ReactNode; label: string; value: string }>(null);
 
   useEffect(() => {
     if (chainId && (!selectedChain || +selectedChain.value !== chainId)) {
-      setSelectedChain(chains.find((item) => +item.value === chainId));
+      setSelectedChain(chains.find((item) => +item.value === chainId) || null);
     }
   }, [chainId, selectedChain]);
 
-  const handleChangeNetwork = async (network) => {
+  const handleChangeNetwork = async (network: any) => {
     try {
       const chain = getChainDataById(+network.value);
-      console.log(chain);
+
+      // @ts-ignore
       await window?.ethereum?.request({
         jsonrpc: "2.0",
         method: "wallet_addEthereumChain",

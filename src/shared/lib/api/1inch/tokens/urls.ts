@@ -1,3 +1,3 @@
 export const urls = {
-  tokens: (chainId) => `/${chainId}/tokens`,
+  tokens: (chainId: string) => `/${chainId}/tokens`,
 };
