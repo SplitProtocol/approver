@@ -1,57 +1,13 @@
 import { useEthers } from "@usedapp/core";
 import { BigNumber, ethers } from "ethers";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { getTokensByChainId } from "@/shared/lib/api/1inch/tokens";
 import { Token } from "@/shared/lib/api/1inch/tokens/types";
-import { chainsData } from "@/shared/lib/constants";
-import {
-  AvalancheLogo,
-  BSCLogo,
-  DaiLogo,
-  EthereumLogo,
-  FantomLogo,
-  PolygonLogo,
-  UsdcLogo,
-  UsdtLogo,
-  WbtcLogo,
-} from "@/shared/lib/icons";
+import { commonTokens } from "@/shared/lib/constants";
 import { Button, Container, Input, TokensList } from "@/shared/ui";
 
 import * as S from "./style";
-
-const COMMON_TOKENS = [
-  {
-    symbol: "USDT",
-    logo: <UsdtLogo />,
-    address: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-  },
-  {
-    symbol: "USDC",
-    logo: <UsdcLogo />,
-    address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  },
-  {
-    symbol: "WETH",
-    logo: <EthereumLogo />,
-    address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-  },
-  {
-    symbol: "WBTC",
-    logo: <WbtcLogo />,
-    address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-  },
-  {
-    symbol: "DAI",
-    logo: <DaiLogo />,
-    address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-  },
-];
-
-const WBNB_ADDRESS = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const WAVAX_ADDRESS = "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7";
-const WFTM_ADDRESS = "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83";
-const WMATIC_ADDRESS = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
 
 const ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
@@ -77,55 +33,6 @@ export const MainPage: FC = () => {
       setTokens(tokensArr);
     })();
   }, [chainId]);
-
-  const lastToken = useMemo(() => {
-    if (chainId === Number(chainsData.ethereum.chainId) || chainId === Number(chainsData.arbitrum.chainId)) {
-      return null;
-    }
-    if (chainId === Number(chainsData.bsc.chainId)) {
-      return (
-        <S.TokensItem
-          selected={WBNB_ADDRESS === selectedToken}
-          onClick={() => (WBNB_ADDRESS === selectedToken ? setSelectedToken("") : setSelectedToken(WBNB_ADDRESS))}
-        >
-          <BSCLogo />
-          WBNB
-        </S.TokensItem>
-      );
-    }
-    if (chainId === Number(chainsData.avalanche.chainId)) {
-      return (
-        <S.TokensItem
-          selected={WAVAX_ADDRESS === selectedToken}
-          onClick={() => (WAVAX_ADDRESS === selectedToken ? setSelectedToken("") : setSelectedToken(WAVAX_ADDRESS))}
-        >
-          <AvalancheLogo />
-          WAVAX
-        </S.TokensItem>
-      );
-    }
-    if (chainId === Number(chainsData.fantom.chainId)) {
-      return (
-        <S.TokensItem
-          selected={WFTM_ADDRESS === selectedToken}
-          onClick={() => (WFTM_ADDRESS === selectedToken ? setSelectedToken("") : setSelectedToken(WFTM_ADDRESS))}
-        >
-          <FantomLogo />
-          WFTM
-        </S.TokensItem>
-      );
-    }
-
-    return (
-      <S.TokensItem
-        selected={WMATIC_ADDRESS === selectedToken}
-        onClick={() => (WMATIC_ADDRESS === selectedToken ? setSelectedToken("") : setSelectedToken(WMATIC_ADDRESS))}
-      >
-        <PolygonLogo />
-        WMATIC
-      </S.TokensItem>
-    );
-  }, [chainId, selectedToken]);
 
   useEffect(() => {
     if (tokens.length && account && library) {
@@ -169,7 +76,7 @@ export const MainPage: FC = () => {
           <S.Tokens>
             <S.TokensTitle>Common tokens</S.TokensTitle>
             <S.TokensList>
-              {COMMON_TOKENS.map((item) => (
+              {commonTokens[chainId]?.map((item) => (
                 <S.TokensItem
                   key={item.address}
                   selected={item.address === selectedToken}
@@ -181,7 +88,6 @@ export const MainPage: FC = () => {
                   {item.symbol}
                 </S.TokensItem>
               ))}
-              {lastToken}
             </S.TokensList>
           </S.Tokens>
 

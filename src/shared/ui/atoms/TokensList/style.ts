@@ -1,6 +1,12 @@
 import { styled } from "@/shared/lib/styles";
 
-export const TokensList = styled("div", {});
+export const TokensList = styled("div", {
+  minWidth: "360px",
+  margin: "0 -20px",
+  maxHeight: 400,
+
+  overflow: "auto",
+});
 
 export const Token = styled("button", {
   display: "flex",
@@ -8,7 +14,6 @@ export const Token = styled("button", {
   justifyContent: "space-between",
 
   minWidth: "360px",
-  margin: "0 -20px",
   padding: "8px 20px",
 
   backgroundColor: "transparent",

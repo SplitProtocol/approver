@@ -3,6 +3,7 @@ import { getDefaultProvider } from "ethers";
 
 export const dappConfig: Config = {
   readOnlyChainId: Mainnet.chainId,
+  noMetamaskDeactivate: true,
   readOnlyUrls: {
     [Mainnet.chainId]: getDefaultProvider("mainnet"),
     [BSC.chainId]: "https://bsc-dataseed.binance.org",
