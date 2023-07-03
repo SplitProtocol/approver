@@ -12,7 +12,62 @@ import * as S from "./style";
 const ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
   "function getUserBalances(address user, address[] calldata tokens) external view returns (uint256[] memory balances)",
-  "function getTokensDecimals(address[] calldata tokens) external view returns (uint256[] memory tokensDecimals)"
+  "function getTokensDecimals(address[] calldata tokens) external view returns (uint256[] memory tokensDecimals)",
+];
+
+const TOKEN_ABI = [
+  {
+    inputs: [],
+    name: "decimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "symbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
 export const MainPage: FC = () => {
@@ -20,6 +75,7 @@ export const MainPage: FC = () => {
   const [search, setSearch] = useState<string>("");
   const [selectedToken, setSelectedToken] = useState<string>("");
   const [tokenBalances, setTokenBalances] = useState<string[]>([]);
+  const [customToken, setCustomToken] = useState<null | { address: string; name: string; symbol: string }>(null);
   const { chainId, library, account } = useEthers();
 
   useEffect(() => {
@@ -44,8 +100,8 @@ export const MainPage: FC = () => {
         const tokenAddrs = tokens.filter((item) => item.address !== "0x").map((item) => item.address);
         const balancesWei = await contract.getUserBalances(account, tokenAddrs);
         const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
-        let balances = [];
-        for (let i = 0; i < tokenAddrs.length; i++) {
+        const balances = [];
+        for (let i = 0; i < tokenAddrs.length; i += 1) {
           balances[i] = BigNumber.from(balancesWei[i]).div(BigNumber.from(10).pow(BigNumber.from(tokenDecimals[i])));
         }
         setTokenBalances(balances.map((item: BigNumber) => item.toString()));
@@ -61,8 +117,30 @@ export const MainPage: FC = () => {
     const signer = library?.getSigner();
     const contract = new ethers.Contract(selectedToken, ABI, signer);
 
-    await contract.approve("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", "115792089237316195423570985008687907853269984665640564039457584007913129639935");
+    await contract.approve(
+      "0xe47085AaA1dc8122f5A1f623068967b3bc92782c",
+      "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    );
   };
+
+  useEffect(() => {
+    if (
+      search.length === 42 &&
+      search.includes("0x") &&
+      !tokens.find((item) => item.address.toLowerCase().includes(search.toLowerCase()))
+    ) {
+      (async function () {
+        const signer = library?.getSigner();
+        const contract = new ethers.Contract(search, TOKEN_ABI, signer);
+        const name = await contract.name();
+        const symbol = await contract.symbol();
+
+        setCustomToken({ symbol, address: search, name });
+      })();
+    } else {
+      setCustomToken(null);
+    }
+  }, [library, search, tokens]);
 
   return (
     <S.Root>
@@ -80,38 +158,43 @@ export const MainPage: FC = () => {
           <S.Tokens>
             <S.TokensTitle>Common tokens</S.TokensTitle>
             <S.TokensList>
-              {chainId !== undefined && commonTokens[("ch" + chainId.toString()) as keyof typeof commonTokens]?.map((item) => (
-                <S.TokensItem
-                  key={item.address}
-                  selected={item.address === selectedToken}
-                  onClick={() =>
-                    item.address === selectedToken ? setSelectedToken("") : setSelectedToken(item.address)
-                  }
-                >
-                  {item.logo}
-                  {item.symbol}
-                </S.TokensItem>
-              ))}
+              {chainId !== undefined &&
+                commonTokens[`ch${chainId.toString()}` as keyof typeof commonTokens]?.map((item) => (
+                  <S.TokensItem
+                    key={item.address}
+                    selected={item.address === selectedToken}
+                    onClick={() =>
+                      item.address === selectedToken ? setSelectedToken("") : setSelectedToken(item.address)
+                    }
+                  >
+                    {item.logo}
+                    {item.symbol}
+                  </S.TokensItem>
+                ))}
             </S.TokensList>
           </S.Tokens>
 
           <TokensList
             selectedToken={selectedToken}
             onSelect={setSelectedToken}
-            tokens={tokens
-              .filter(
-                (item) =>
-                  item.name.toLowerCase().includes(search.toLowerCase()) ||
-                  item.address.toLowerCase().includes(search.toLowerCase()) ||
-                  item.symbol.toLowerCase().includes(search.toLowerCase()),
-              )
-              .map((item, index) => ({
-                name: item.name,
-                symbol: item.symbol,
-                img: item.logoURI,
-                amount: tokenBalances.length ? tokenBalances[index] : "0",
-                address: item.address,
-              }))}
+            tokens={
+              customToken
+                ? [customToken]
+                : tokens
+                    .filter(
+                      (item) =>
+                        item.name.toLowerCase().includes(search.toLowerCase()) ||
+                        item.address.toLowerCase().includes(search.toLowerCase()) ||
+                        item.symbol.toLowerCase().includes(search.toLowerCase()),
+                    )
+                    .map((item, index) => ({
+                      name: item.name,
+                      symbol: item.symbol,
+                      img: item.logoURI,
+                      amount: tokenBalances.length ? tokenBalances[index] : "0",
+                      address: item.address,
+                    }))
+            }
           />
 
           <S.SubmitButton>

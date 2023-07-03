@@ -1,8 +1,8 @@
 interface Token {
-  img: string;
+  img?: string;
   symbol: string;
   name: string;
-  amount: string;
+  amount?: string;
   address: string;
 }
 

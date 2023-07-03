@@ -13,7 +13,7 @@ export const TokensList: FC<TokensListProps> = ({ tokens, selectedToken, onSelec
         onClick={() => (selectedToken === address ? onSelect("") : onSelect(address))}
       >
         <S.TokenInfo>
-          <S.TokenImg src={img} alt={symbol} />
+          {img && <S.TokenImg src={img} alt={symbol} />}
           <S.TokenWrapper>
             <S.TokenSymbol>{symbol}</S.TokenSymbol>
             <S.TokenName>{name}</S.TokenName>
