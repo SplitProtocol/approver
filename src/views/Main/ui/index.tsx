@@ -112,7 +112,7 @@ export const MainPage: FC = () => {
 
           <S.SubmitButton>
             <Button stretch size="large" onClick={onApprove}>
-              Give approve
+              Give approve to SplitRouter
             </Button>
           </S.SubmitButton>
         </S.Block>
