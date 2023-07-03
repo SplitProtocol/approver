@@ -12,6 +12,7 @@ import * as S from "./style";
 const ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
   "function getUserBalances(address user, address[] calldata tokens) external view returns (uint256[] memory balances)",
+  "function getTokensDecimals(address[] calldata tokens) external view returns (uint256[] memory tokensDecimals)"
 ];
 
 export const MainPage: FC = () => {
@@ -39,11 +40,14 @@ export const MainPage: FC = () => {
       (async function () {
         const signer = library?.getSigner();
         const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
-
-        const balances = await contract.getUserBalances(
-          account,
-          tokens.filter((item) => item.address !== "0x").map((item) => item.address),
-        );
+        const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
+        const tokenAddrs = tokens.filter((item) => item.address !== "0x").map((item) => item.address);
+        const balancesWei = await contract.getUserBalances(account, tokenAddrs);
+        const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
+        let balances = [];
+        for (let i = 0; i < tokenAddrs.length; i++) {
+          balances[i] = BigNumber.from(balancesWei[i]).div(BigNumber.from(10).pow(BigNumber.from(tokenDecimals[i])));
+        }
         setTokenBalances(balances.map((item: BigNumber) => item.toString()));
       })();
     }
