@@ -19,7 +19,17 @@ export const Title = styled("h2", {
 });
 
 export const Search = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+
   marginBottom: 24,
+});
+
+export const ClearButton = styled("button", {
+  backgroundColor: "transparent",
+  border: "none",
+  cursor: "pointer",
 });
 
 export const Tokens = styled("div", {

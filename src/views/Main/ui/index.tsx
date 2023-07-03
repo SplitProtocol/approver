@@ -75,8 +75,28 @@ export const MainPage: FC = () => {
   const [search, setSearch] = useState<string>("");
   const [selectedToken, setSelectedToken] = useState<string>("");
   const [tokenBalances, setTokenBalances] = useState<string[]>([]);
-  const [customToken, setCustomToken] = useState<null | { address: string; name: string; symbol: string }>(null);
+  const [customToken, setCustomToken] = useState<null | {
+    address: string;
+    name: string;
+    symbol: string;
+    amount: string;
+  }>(null);
   const { chainId, library, account } = useEthers();
+
+  const getBalances = async (tokensArr: string[]) => {
+    const signer = library?.getSigner();
+    const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
+    const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
+    const tokenAddrs = tokensArr.filter((item) => item !== "0x");
+    const balancesWei = await contract.getUserBalances(account, tokenAddrs);
+    const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
+    const balances = [];
+    for (let i = 0; i < tokenAddrs.length; i += 1) {
+      balances[i] = BigNumber.from(balancesWei[i]).div(BigNumber.from(10).pow(BigNumber.from(tokenDecimals[i])));
+    }
+
+    return balances.map((item: BigNumber) => item.toString());
+  };
 
   useEffect(() => {
     if (!chainId) {
@@ -94,20 +114,11 @@ export const MainPage: FC = () => {
   useEffect(() => {
     if (tokens.length && account && library) {
       (async function () {
-        const signer = library?.getSigner();
-        const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
-        const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
-        const tokenAddrs = tokens.filter((item) => item.address !== "0x").map((item) => item.address);
-        const balancesWei = await contract.getUserBalances(account, tokenAddrs);
-        const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
-        const balances = [];
-        for (let i = 0; i < tokenAddrs.length; i += 1) {
-          balances[i] = BigNumber.from(balancesWei[i]).div(BigNumber.from(10).pow(BigNumber.from(tokenDecimals[i])));
-        }
-        setTokenBalances(balances.map((item: BigNumber) => item.toString()));
+        const balances = await getBalances(tokens.map((item) => item.address));
+        setTokenBalances(balances);
       })();
     }
-  }, [tokens, account, library]);
+  }, [tokens, account, library, getBalances]);
 
   const onApprove = async () => {
     if (!selectedToken) {
@@ -134,8 +145,9 @@ export const MainPage: FC = () => {
         const contract = new ethers.Contract(search, TOKEN_ABI, signer);
         const name = await contract.name();
         const symbol = await contract.symbol();
+        const balances = await getBalances([search]);
 
-        setCustomToken({ symbol, address: search, name });
+        setCustomToken({ symbol, address: search, name, amount: balances[0] });
       })();
     } else {
       setCustomToken(null);
@@ -153,6 +165,10 @@ export const MainPage: FC = () => {
               onChange={(value) => setSearch(value as string)}
               placeholder="Search name or paste address"
             />
+
+            <S.ClearButton type="button" onClick={() => setSearch("")}>
+              <img src="/assets/icons/close.svg" alt="clear" />
+            </S.ClearButton>
           </S.Search>
 
           <S.Tokens>

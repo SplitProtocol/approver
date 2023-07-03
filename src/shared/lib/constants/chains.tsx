@@ -125,7 +125,7 @@ export const chains = [
 ];
 
 export const commonTokens = {
-  "ch1": [
+  ch1: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
@@ -152,7 +152,7 @@ export const commonTokens = {
       address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
     },
   ],
-  "ch56": [
+  ch56: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
@@ -169,7 +169,7 @@ export const commonTokens = {
       address: "0x4DB5a66E937A9F4473fA95b1cAF1d1E1D62E29EA",
     },
     {
-      symbol: "WBTC",
+      symbol: "BTCB",
       logo: <WbtcLogo />,
       address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
     },
@@ -184,7 +184,7 @@ export const commonTokens = {
       address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
     },
   ],
-  "ch137": [
+  ch137: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
@@ -216,7 +216,7 @@ export const commonTokens = {
       address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
     },
   ],
-  "ch43114": [
+  ch43114: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
@@ -248,7 +248,7 @@ export const commonTokens = {
       address: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
     },
   ],
-  "ch42161": [
+  ch42161: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
@@ -280,7 +280,7 @@ export const commonTokens = {
       address: "0x912CE59144191C1204E64559FE8253a0e49E6548",
     },
   ],
-  "ch250": [
+  ch250: [
     {
       symbol: "USDT",
       logo: <UsdtLogo />,
