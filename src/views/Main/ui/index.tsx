@@ -76,7 +76,7 @@ export const MainPage: FC = () => {
           <S.Tokens>
             <S.TokensTitle>Common tokens</S.TokensTitle>
             <S.TokensList>
-              {chainId !== undefined && commonTokens[chainId]?.map((item) => (
+              {chainId !== undefined && commonTokens[chainId.toString()]?.map((item) => (
                 <S.TokensItem
                   key={item.address}
                   selected={item.address === selectedToken}
