@@ -99,7 +99,7 @@ export const MainPage: FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selectedToken, setSelectedToken] = useState<string>("");
-  const [tokenBalances, setTokenBalances] = useState<string[]>([]);
+  const [tokenBalances, setTokenBalances] = useState<{ address: string; balance?: string }[]>([]);
   const [customToken, setCustomToken] = useState<null | {
     address: string;
     name: string;
@@ -113,19 +113,23 @@ export const MainPage: FC = () => {
       const signer = library?.getSigner();
       const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
       const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
-      const tokenAddrs = tokensArr.filter(
-        (item) => item !== "0x" && item !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      );
+      const tokenAddrs = tokensArr.filter((item) => item !== "0x");
       const balancesWei = await contract.getUserBalances(account, tokenAddrs);
-      const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
-      const balances = [];
-      for (let i = 0; i < tokenAddrs.length; i += 1) {
+      const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs.slice(1));
+      const balances = [new BigNumber(balancesWei[0]).div(new BigNumber(10).pow(new BigNumber(18).toNumber()))];
+      for (let i = 1; i < tokenAddrs.length - 1; i += 1) {
         balances[i] = new BigNumber(balancesWei[i]).div(
           new BigNumber(10).pow(new BigNumber(tokenDecimals[i]).toNumber()),
         );
       }
 
-      return balances.map((item: BigNumber) => item.toString());
+      return tokenAddrs.map((item, index) => ({
+        address: item,
+        balance:
+          balances[index]?.toString() !== "0"
+            ? Number(balances[index])?.toFixed(8)?.toString()
+            : balances[index]?.toString(),
+      }));
     },
     [account, library],
   );
@@ -176,12 +180,14 @@ export const MainPage: FC = () => {
         const symbol = await contract.symbol();
         const balances = await getBalances([search]);
 
-        setCustomToken({ symbol, address: search, name, amount: balances[0] });
+        setCustomToken({ symbol, address: search, name, amount: balances[0].balance || "0" });
       })();
     } else {
       setCustomToken(null);
     }
   }, [getBalances, library, search, tokens]);
+
+  console.log(tokenBalances);
 
   return (
     <S.Root>
@@ -232,11 +238,13 @@ export const MainPage: FC = () => {
                         item.address.toLowerCase().includes(search.toLowerCase()) ||
                         item.symbol.toLowerCase().includes(search.toLowerCase()),
                     )
-                    .map((item, index) => ({
+                    .map((item) => ({
                       name: item.name,
                       symbol: item.symbol,
                       img: `/assets/img/tokens/${chainId}/${item.address}.png`,
-                      amount: tokenBalances.length ? tokenBalances[index] : "0",
+                      amount: tokenBalances.length
+                        ? tokenBalances.find((balance) => balance.address === item.address)?.balance || "0"
+                        : "0",
                       address: item.address,
                     }))
             }
