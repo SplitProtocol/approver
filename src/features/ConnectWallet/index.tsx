@@ -19,8 +19,6 @@ const getChainDataById = (chainId: number) => {
       return chainsData.arbitrum;
     case 250:
       return chainsData.fantom;
-    case 10:
-      return chainsData.optimism;
     case 1:
       return chainsData.ethereum;
     default:

@@ -229,7 +229,7 @@ export const MainPage: FC = () => {
             <S.TokensTitle>Common tokens</S.TokensTitle>
             <S.TokensList>
               {(chainId !== undefined || prevChainId !== undefined) &&
-                commonTokens[`ch${(chainId || prevChainId).toString()}` as keyof typeof commonTokens]?.map((item) => (
+                commonTokens[`ch${(chainId || prevChainId)?.toString()}` as keyof typeof commonTokens]?.map((item) => (
                   <S.TokensItem
                     key={item.address}
                     selected={item.address === selectedToken}
