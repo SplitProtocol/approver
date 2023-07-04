@@ -279,7 +279,11 @@ export const MainPage: FC = () => {
             <Button stretch size="large" onClick={onApprove}>
               Give approve
               {selectedToken ? (
-                <img src={tokens.find((item) => item.address === selectedToken)?.logoURI} alt="" />
+                <>
+                  {" "}
+                  <img src={tokens.find((item) => item.address === selectedToken)?.logoURI} width={20} alt="" />{" "}
+                  {tokens.find((item) => item.address === selectedToken)?.symbol}
+                </>
               ) : null}{" "}
               to SplitRouter
             </Button>
