@@ -150,10 +150,12 @@ export const MainPage: FC = () => {
         const index = data.findIndex((token) => token.address === item.address);
 
         if (index >= 0) {
+          // @ts-ignore
           data[index].balance = item.balance;
         }
       });
 
+      // @ts-ignore
       setTokens(data.sort((a, b) => (a.balance ? a.balance < b.balance : true)) as Token[]);
     })();
   }, [chainId, getBalances]);
