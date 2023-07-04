@@ -125,7 +125,7 @@ export const MainPage: FC = () => {
       const balances = [new BigNumber(balancesWei[0]).div(new BigNumber(10).pow(new BigNumber(18).toNumber()))];
       for (let i = 1; i < tokenAddrs.length - 1; i += 1) {
         balances[i] = new BigNumber(balancesWei[i]).div(
-          new BigNumber(10).pow(new BigNumber(tokenDecimals[i]).toNumber()),
+          new BigNumber(10).pow(new BigNumber(tokenDecimals[i - 1]).toNumber()),
         );
       }
 
