@@ -10,7 +10,7 @@ const Document = () => (
       <link rel="icon" href="/favicon.png" />
       <link rel="apple-touch-icon" href="/favicon.png" />
 
-      <title>Split approver</title>
+      <title>Split Approver</title>
     </Head>
     <body>
       <Main />
