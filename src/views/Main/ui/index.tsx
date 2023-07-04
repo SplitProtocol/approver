@@ -145,6 +145,7 @@ export const MainPage: FC = () => {
     (async function () {
       const data = [...getTokensByChain(chainId)];
       const balances = await getBalances(data.map((item) => item.address));
+      // @ts-ignore
       const tokensWithBalance = [];
 
       balances.forEach((item) => {
