@@ -137,7 +137,7 @@ export const MainPage: FC = () => {
 
     const data = getTokensByChain(chainId);
 
-    setTokens(data);
+    setTokens(data as Token[]);
   }, [chainId]);
 
   useEffect(() => {
