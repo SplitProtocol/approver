@@ -99,7 +99,6 @@ export const MainPage: FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [search, setSearch] = useState<string>("");
   const [selectedToken, setSelectedToken] = useState<string>("");
-  const [tokenBalances, setTokenBalances] = useState<{ address: string; balance?: string }[]>([]);
   const [customToken, setCustomToken] = useState<null | {
     address: string;
     name: string;
@@ -110,7 +109,11 @@ export const MainPage: FC = () => {
 
   const getBalances = useCallback(
     async (tokensArr: string[]) => {
-      const signer = library?.getSigner();
+      if (!library || !library.getSigner) {
+        return [];
+      }
+
+      const signer = library.getSigner();
       const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
       const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
       const tokenAddrs = tokensArr.filter((item) => item !== "0x");
@@ -126,7 +129,7 @@ export const MainPage: FC = () => {
       return tokenAddrs.map((item, index) => ({
         address: item,
         balance:
-          balances[index]?.toString() !== "0"
+          balances[index]?.toString() && balances[index]?.toString() !== "0"
             ? Number(balances[index])?.toFixed(8)?.toString()
             : balances[index]?.toString(),
       }));
@@ -139,19 +142,21 @@ export const MainPage: FC = () => {
       return;
     }
 
-    const data = getTokensByChain(chainId);
+    (async function () {
+      const data = getTokensByChain(chainId);
+      const balances = await getBalances(data.map((item) => item.address));
 
-    setTokens(data as Token[]);
-  }, [chainId]);
+      balances.forEach((item) => {
+        const index = data.findIndex((token) => token.address === item.address);
 
-  useEffect(() => {
-    if (tokens.length && account && library) {
-      (async function () {
-        const balances = await getBalances(tokens.map((item) => item.address));
-        setTokenBalances(balances);
-      })();
-    }
-  }, [tokens, account, library, getBalances]);
+        if (index >= 0) {
+          data[index].balance = item.balance;
+        }
+      });
+
+      setTokens(data.sort((a, b) => (a.balance ? a.balance < b.balance : true)) as Token[]);
+    })();
+  }, [chainId, getBalances]);
 
   const onApprove = async () => {
     if (!selectedToken) {
@@ -186,8 +191,6 @@ export const MainPage: FC = () => {
       setCustomToken(null);
     }
   }, [getBalances, library, search, tokens]);
-
-  console.log(tokenBalances);
 
   return (
     <S.Root>
@@ -242,9 +245,7 @@ export const MainPage: FC = () => {
                       name: item.name,
                       symbol: item.symbol,
                       img: `/assets/img/tokens/${chainId}/${item.address}.png`,
-                      amount: tokenBalances.length
-                        ? tokenBalances.find((balance) => balance.address === item.address)?.balance || "0"
-                        : "0",
+                      amount: item.balance,
                       address: item.address,
                     }))
             }

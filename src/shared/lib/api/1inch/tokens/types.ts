@@ -5,6 +5,7 @@ export interface Token {
   name: string;
   symbol: string;
   tags: string[];
+  balance?: string;
 }
 
 export interface GetTokensByChainIdResponse {
