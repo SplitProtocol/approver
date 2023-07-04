@@ -2,6 +2,7 @@ import { useEthers } from "@usedapp/core";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { FC, useCallback, useEffect, useState } from "react";
+import { usePreviousDistinct } from "react-use";
 
 import { Token } from "@/shared/lib/api/1inch/tokens/types";
 import { commonTokens } from "@/shared/lib/constants";
@@ -105,7 +106,9 @@ export const MainPage: FC = () => {
     symbol: string;
     amount: string;
   }>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { chainId, library, account } = useEthers();
+  const prevChainId = usePreviousDistinct(chainId);
 
   const getBalances = useCallback(
     async (tokensArr: string[]) => {
@@ -143,6 +146,8 @@ export const MainPage: FC = () => {
     }
 
     (async function () {
+      setIsLoading(true);
+
       const data = [...getTokensByChain(chainId)];
       const balances = await getBalances(data.map((item) => item.address));
       // @ts-ignore
@@ -164,6 +169,8 @@ export const MainPage: FC = () => {
 
       // @ts-ignore
       setTokens([...tokensWithBalance, ...data.filter((item) => !!item)] as Token[]);
+
+      setIsLoading(false);
     })();
   }, [chainId, getBalances]);
 
@@ -221,8 +228,8 @@ export const MainPage: FC = () => {
           <S.Tokens>
             <S.TokensTitle>Common tokens</S.TokensTitle>
             <S.TokensList>
-              {chainId !== undefined &&
-                commonTokens[`ch${chainId.toString()}` as keyof typeof commonTokens]?.map((item) => (
+              {(chainId !== undefined || prevChainId !== undefined) &&
+                commonTokens[`ch${(chainId || prevChainId).toString()}` as keyof typeof commonTokens]?.map((item) => (
                   <S.TokensItem
                     key={item.address}
                     selected={item.address === selectedToken}
@@ -237,32 +244,44 @@ export const MainPage: FC = () => {
             </S.TokensList>
           </S.Tokens>
 
-          <TokensList
-            selectedToken={selectedToken}
-            onSelect={setSelectedToken}
-            tokens={
-              customToken
-                ? [customToken]
-                : tokens
-                    .filter(
-                      (item) =>
-                        item.name.toLowerCase().includes(search.toLowerCase()) ||
-                        item.address.toLowerCase().includes(search.toLowerCase()) ||
-                        item.symbol.toLowerCase().includes(search.toLowerCase()),
-                    )
-                    .map((item) => ({
-                      name: item.name,
-                      symbol: item.symbol,
-                      img: `/assets/img/tokens/${chainId}/${item.address}.png`,
-                      amount: item.balance,
-                      address: item.address,
-                    }))
-            }
-          />
+          {isLoading ? (
+            <div className="loadingio-spinner-rolling-bhoxhmskvfq">
+              <div className="ldio-uluwmv6sm4p">
+                <div />
+              </div>
+            </div>
+          ) : (
+            <TokensList
+              selectedToken={selectedToken}
+              onSelect={setSelectedToken}
+              tokens={
+                customToken
+                  ? [customToken]
+                  : tokens
+                      .filter(
+                        (item) =>
+                          item.name.toLowerCase().includes(search.toLowerCase()) ||
+                          item.address.toLowerCase().includes(search.toLowerCase()) ||
+                          item.symbol.toLowerCase().includes(search.toLowerCase()),
+                      )
+                      .map((item) => ({
+                        name: item.name,
+                        symbol: item.symbol,
+                        img: `/assets/img/tokens/${chainId || prevChainId}/${item.address}.png`,
+                        amount: item.balance,
+                        address: item.address,
+                      }))
+              }
+            />
+          )}
 
           <S.SubmitButton>
             <Button stretch size="large" onClick={onApprove}>
-              Give approve to SplitRouter
+              Give approve
+              {selectedToken ? (
+                <img src={tokens.find((item) => item.address === selectedToken)?.logoURI} alt="" />
+              ) : null}{" "}
+              to SplitRouter
             </Button>
           </S.SubmitButton>
         </S.Block>

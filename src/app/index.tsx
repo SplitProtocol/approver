@@ -1,3 +1,5 @@
+import "../../public/style.css";
+
 import { DAppProvider } from "@usedapp/core";
 import { FC } from "react";
 

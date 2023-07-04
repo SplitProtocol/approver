@@ -67,17 +67,6 @@ export const chainsData = {
     },
     blockExplorerUrls: ["https://ftmscan.com/"],
   },
-  optimism: {
-    chainId: "0xa",
-    chainName: "Split Optimism",
-    rpcUrls: ["https://splitrouter.io/http/optimism"],
-    nativeCurrency: {
-      name: "Ethereum",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    blockExplorerUrls: ["https://optimistic.etherscan.io/"],
-  },
   ethereum: {
     chainId: "0x1",
     chainName: "Split Ethereum",
@@ -164,8 +153,8 @@ export const commonTokens = {
       address: "0xB04906e95AB5D797aDA81508115611fee694c2b3",
     },
     {
-      symbol: "WETH",
-      logo: <EthereumLogo />,
+      symbol: "ETH",
+      logo: <img src="/assets/img/eth-1.png" alt="" width={25} />,
       address: "0x4DB5a66E937A9F4473fA95b1cAF1d1E1D62E29EA",
     },
     {
@@ -233,12 +222,27 @@ export const commonTokens = {
       address: "0x8b82A291F83ca07Af22120ABa21632088fC92931",
     },
     {
-      symbol: "WBTC",
+      symbol: "USDT.e",
+      logo: <UsdtLogo />,
+      address: "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+    },
+    {
+      symbol: "USDC.e",
+      logo: <UsdcLogo />,
+      address: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+    },
+    {
+      symbol: "WETH.e",
+      logo: <EthereumLogo />,
+      address: "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
+    },
+    {
+      symbol: "WBTC.e",
       logo: <WbtcLogo />,
       address: "0x50b7545627a5162F82A992c33b87aDc75187B218",
     },
     {
-      symbol: "DAI",
+      symbol: "DAI.e",
       logo: <DaiLogo />,
       address: "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
     },
@@ -292,12 +296,12 @@ export const commonTokens = {
       address: "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
     },
     {
-      symbol: "WETH",
+      symbol: "ETH",
       logo: <EthereumLogo />,
       address: "0x74b23882a30290451A17c44f4F05243b6b58C76d",
     },
     {
-      symbol: "WBTC",
+      symbol: "BTC",
       logo: <WbtcLogo />,
       address: "0x321162Cd933E2Be498Cd2267a90534A804051b11",
     },
@@ -305,6 +309,11 @@ export const commonTokens = {
       symbol: "DAI",
       logo: <DaiLogo />,
       address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+    },
+    {
+      symbol: "WFTM",
+      logo: <FantomLogo />,
+      address: "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
     },
   ],
 };
