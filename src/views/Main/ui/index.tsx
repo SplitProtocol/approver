@@ -143,20 +143,26 @@ export const MainPage: FC = () => {
     }
 
     (async function () {
-      const data = getTokensByChain(chainId);
+      const data = [...getTokensByChain(chainId)];
       const balances = await getBalances(data.map((item) => item.address));
+      const tokensWithBalance = [];
 
       balances.forEach((item) => {
-        const index = data.findIndex((token) => token.address === item.address);
+        const index = data.findIndex((token) => token?.address === item.address);
 
         if (index >= 0) {
           // @ts-ignore
           data[index].balance = item.balance;
         }
+
+        if (item.balance && +item.balance > 0) {
+          tokensWithBalance.push(data[index]);
+          delete data[index];
+        }
       });
 
       // @ts-ignore
-      setTokens(data.sort((a, b) => (a.balance ? a.balance < b.balance : true)) as Token[]);
+      setTokens([...tokensWithBalance, ...data.filter((item) => !!item)] as Token[]);
     })();
   }, [chainId, getBalances]);
 
