@@ -23,6 +23,10 @@ export const Token = styled("button", {
 
   transition: "$default",
 
+  "&:disabled": {
+    cursor: "default",
+  },
+
   "@toWideMobile": {
     minWidth: 320,
   },

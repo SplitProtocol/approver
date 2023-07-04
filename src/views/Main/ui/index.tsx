@@ -1,13 +1,38 @@
 import { useEthers } from "@usedapp/core";
-import { BigNumber, ethers } from "ethers";
-import { FC, useEffect, useState } from "react";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
+import { FC, useCallback, useEffect, useState } from "react";
 
-import { getTokensByChainId } from "@/shared/lib/api/1inch/tokens";
 import { Token } from "@/shared/lib/api/1inch/tokens/types";
 import { commonTokens } from "@/shared/lib/constants";
+import ethTokens from "@/shared/lib/constants/tokens/1.json";
+import bscTokens from "@/shared/lib/constants/tokens/56.json";
+import polTokens from "@/shared/lib/constants/tokens/137.json";
+import fanTokens from "@/shared/lib/constants/tokens/250.json";
+import arbTokens from "@/shared/lib/constants/tokens/42161.json";
+import avaTokens from "@/shared/lib/constants/tokens/43114.json";
 import { Button, Container, Input, TokensList } from "@/shared/ui";
 
 import * as S from "./style";
+
+const getTokensByChain = (chainId: number) => {
+  switch (chainId) {
+    case 1:
+      return ethTokens;
+    case 56:
+      return bscTokens;
+    case 137:
+      return polTokens;
+    case 250:
+      return fanTokens;
+    case 42161:
+      return arbTokens;
+    case 43114:
+      return avaTokens;
+    default:
+      return ethTokens;
+  }
+};
 
 const ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
@@ -83,32 +108,36 @@ export const MainPage: FC = () => {
   }>(null);
   const { chainId, library, account } = useEthers();
 
-  const getBalances = async (tokensArr: string[]) => {
-    const signer = library?.getSigner();
-    const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
-    const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
-    const tokenAddrs = tokensArr.filter((item) => item !== "0x");
-    const balancesWei = await contract.getUserBalances(account, tokenAddrs);
-    const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
-    const balances = [];
-    for (let i = 0; i < tokenAddrs.length; i += 1) {
-      balances[i] = BigNumber.from(balancesWei[i]).div(BigNumber.from(10).pow(BigNumber.from(tokenDecimals[i])));
-    }
+  const getBalances = useCallback(
+    async (tokensArr: string[]) => {
+      const signer = library?.getSigner();
+      const contract = new ethers.Contract("0xe47085AaA1dc8122f5A1f623068967b3bc92782c", ABI, signer);
+      const dContract = new ethers.Contract("0xe536f041a310a7a18DEa2b24dA471b4f49090B33", ABI, signer);
+      const tokenAddrs = tokensArr.filter(
+        (item) => item !== "0x" && item !== "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      );
+      const balancesWei = await contract.getUserBalances(account, tokenAddrs);
+      const tokenDecimals = await dContract.getTokensDecimals(tokenAddrs);
+      const balances = [];
+      for (let i = 0; i < tokenAddrs.length; i += 1) {
+        balances[i] = new BigNumber(balancesWei[i]).div(
+          new BigNumber(10).pow(new BigNumber(tokenDecimals[i]).toNumber()),
+        );
+      }
 
-    return balances.map((item: BigNumber) => item.toString());
-  };
+      return balances.map((item: BigNumber) => item.toString());
+    },
+    [account, library],
+  );
 
   useEffect(() => {
     if (!chainId) {
       return;
     }
 
-    (async function () {
-      const { data } = await getTokensByChainId(chainId.toString());
+    const data = getTokensByChain(chainId);
 
-      const tokensArr = Object.values(data.tokens);
-      setTokens(tokensArr);
-    })();
+    setTokens(data);
   }, [chainId]);
 
   useEffect(() => {
@@ -152,7 +181,7 @@ export const MainPage: FC = () => {
     } else {
       setCustomToken(null);
     }
-  }, [library, search, tokens]);
+  }, [getBalances, library, search, tokens]);
 
   return (
     <S.Root>
@@ -206,7 +235,7 @@ export const MainPage: FC = () => {
                     .map((item, index) => ({
                       name: item.name,
                       symbol: item.symbol,
-                      img: item.logoURI,
+                      img: `/assets/img/tokens/${chainId}/${item.address}.png`,
                       amount: tokenBalances.length ? tokenBalances[index] : "0",
                       address: item.address,
                     }))

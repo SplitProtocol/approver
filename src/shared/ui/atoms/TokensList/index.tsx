@@ -11,6 +11,7 @@ export const TokensList: FC<TokensListProps> = ({ tokens, selectedToken, onSelec
         key={`${name}-${img}-${index}`}
         selected={selectedToken === address}
         onClick={() => (selectedToken === address ? onSelect("") : onSelect(address))}
+        disabled={address === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"}
       >
         <S.TokenInfo>
           {img && <S.TokenImg src={img} alt={symbol} />}
