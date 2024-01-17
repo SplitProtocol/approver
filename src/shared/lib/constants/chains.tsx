@@ -15,7 +15,7 @@ export const chainsData = {
   polygon: {
     chainId: "0x89",
     chainName: "Split Polygon",
-    rpcUrls: ["https://splitrouter.io/http/polygon"],
+    rpcUrls: ["https://rpc.splitex.app/http/polygon"],
     nativeCurrency: {
       name: "MATIC",
       symbol: "MATIC",
@@ -26,7 +26,7 @@ export const chainsData = {
   arbitrum: {
     chainId: "0xa4b1",
     chainName: "Split Arbitrum",
-    rpcUrls: ["https://splitrouter.io/http/arbitrum"],
+    rpcUrls: ["https://rpc.splitex.app/http/arbitrum"],
     nativeCurrency: {
       name: "Ethereum",
       symbol: "ETH",
@@ -37,7 +37,7 @@ export const chainsData = {
   bsc: {
     chainId: "0x38",
     chainName: "Split BSC",
-    rpcUrls: ["https://splitrouter.io/http/bsc"],
+    rpcUrls: ["https://rpc.splitex.app/http/bsc"],
     nativeCurrency: {
       name: "BNB",
       symbol: "BNB",
@@ -48,7 +48,7 @@ export const chainsData = {
   avalanche: {
     chainId: "0xa86a",
     chainName: "Split Avalanche",
-    rpcUrls: ["https://splitrouter.io/http/avalanche"],
+    rpcUrls: ["https://rpc.splitex.app/http/avalanche"],
     nativeCurrency: {
       name: "AVAX",
       symbol: "AVAX",
@@ -59,7 +59,7 @@ export const chainsData = {
   fantom: {
     chainId: "0xfa",
     chainName: "Split Fantom",
-    rpcUrls: ["https://splitrouter.io/http/fantom"],
+    rpcUrls: ["https://rpc.splitex.app/http/fantom"],
     nativeCurrency: {
       name: "FTM",
       symbol: "FTM",
@@ -70,7 +70,7 @@ export const chainsData = {
   ethereum: {
     chainId: "0x1",
     chainName: "Split Ethereum",
-    rpcUrls: ["https://splitrouter.io/http/eth"],
+    rpcUrls: ["https://rpc.splitex.app/http/eth"],
     nativeCurrency: {
       name: "Ethereum",
       symbol: "ETH",
